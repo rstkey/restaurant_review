@@ -1,4 +1,11 @@
-// No imports needed: web3, borsh, pg and more are globally available
+import * as borsh from "borsh";
+import assert from "assert";
+import * as web3 from "@solana/web3.js";
+// Manually initialize variables that are automatically defined in Playground
+const PROGRAM_ID = new web3.PublicKey("EH92vyc4PaqfiH7Cfr1e2nXD5KHX73eHTunXMuJEESQZ");
+const connection = new web3.Connection("https://api.devnet.solana.com", "confirmed");
+const wallet = { keypair: web3.Keypair.generate() };
+
 
 /**
  * The state of a greeting account managed by the hello world program
@@ -31,14 +38,14 @@ describe("Test", () => {
   it("greet", async () => {
     // Create greetings account instruction
     const greetingAccountKp = new web3.Keypair();
-    const lamports = await pg.connection.getMinimumBalanceForRentExemption(
+    const lamports = await connection.getMinimumBalanceForRentExemption(
       GREETING_SIZE
     );
     const createGreetingAccountIx = web3.SystemProgram.createAccount({
-      fromPubkey: pg.wallet.publicKey,
+      fromPubkey: wallet.keypair.publicKey,
       lamports,
       newAccountPubkey: greetingAccountKp.publicKey,
-      programId: pg.PROGRAM_ID,
+      programId: PROGRAM_ID,
       space: GREETING_SIZE,
     });
 
@@ -51,7 +58,7 @@ describe("Test", () => {
           isWritable: true,
         },
       ],
-      programId: pg.PROGRAM_ID,
+      programId: PROGRAM_ID,
     });
 
     // Create transaction and add the instructions
@@ -59,14 +66,14 @@ describe("Test", () => {
     tx.add(createGreetingAccountIx, greetIx);
 
     // Send and confirm the transaction
-    const txHash = await web3.sendAndConfirmTransaction(pg.connection, tx, [
-      pg.wallet.keypair,
+    const txHash = await web3.sendAndConfirmTransaction(connection, tx, [
+      wallet.keypair,
       greetingAccountKp,
     ]);
     console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
 
     // Fetch the greetings account
-    const greetingAccount = await pg.connection.getAccountInfo(
+    const greetingAccount = await connection.getAccountInfo(
       greetingAccountKp.publicKey
     );
 
@@ -79,7 +86,7 @@ describe("Test", () => {
 
     // Assertions
     assert.equal(greetingAccount.lamports, lamports);
-    assert(greetingAccount.owner.equals(pg.PROGRAM_ID));
+    assert(greetingAccount.owner.equals(PROGRAM_ID));
     assert.deepEqual(greetingAccount.data, Buffer.from([1, 0, 0, 0]));
     assert.equal(deserializedAccountData.counter, 1);
   });
