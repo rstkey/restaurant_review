@@ -27,7 +27,7 @@ The **Restaurant Review DApp** provides a user-friendly interface to participate
 
 ## Getting Started
 
-Follow these steps to set up the project locally and start participating in web3 reviews.
+You can go [here](https://restaurant-review-pi.vercel.app/) or follow these steps to set up the project locally and start participating in web3 reviews.
 
 ### Prerequisites
 
