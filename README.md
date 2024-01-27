@@ -1,6 +1,6 @@
 # Restaurant Review DApp
 
-Welcome to the **Restaurant Review DApp** project repository! This decentralized application (DApp) leverages blockchain technology to implement an review platform on the Solana network. Participants can add reviews and check reviews given by others.
+Welcome to the **Restaurant Review DApp** project repository! This decentralized application (DApp) leverages blockchain technology to implement an review platform on the Solana network. Participants can add reviews, update reviews and check reviews given by others.
 
 ## Table of Contents
 
@@ -22,6 +22,7 @@ The **Restaurant Review DApp** provides a user-friendly interface to participate
 ## Features
 
 - Add review.
+- Update review.
 - Browse reviews by other users.
 
 ## Getting Started
