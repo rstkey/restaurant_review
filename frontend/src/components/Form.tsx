@@ -1,3 +1,4 @@
+import { ReviewVariant } from "@/models/Review";
 import { FC } from "react";
 
 interface FormProps {
@@ -5,6 +6,7 @@ interface FormProps {
   description: string;
   location: string;
   rating: number;
+  variant: ReviewVariant;
   setTitle: (value: string) => void;
   setDescription: (value: string) => void;
   setLocation: (value: string) => void;
@@ -16,6 +18,7 @@ const ReviewForm: FC<FormProps> = ({
   description,
   location,
   rating,
+  variant,
   setTitle,
   setDescription,
   setLocation,
@@ -96,7 +99,7 @@ const ReviewForm: FC<FormProps> = ({
 
         <div className="flex items-center justify-between">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Submit
+            {variant === ReviewVariant.add ? "Add Review" : "Edit Review"}
           </button>
         </div>
       </div>

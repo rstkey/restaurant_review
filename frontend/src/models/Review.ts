@@ -1,5 +1,10 @@
 import * as borsh from "@project-serum/borsh";
 
+export enum ReviewVariant {
+    add = 0,
+    update = 1,
+}
+
 export class Review {
     title: string;
     rating: number;
@@ -29,9 +34,9 @@ export class Review {
         borsh.str("location"),
     ]);
 
-    serialize(): Buffer {
+    serialize(variant: ReviewVariant): Buffer {
         const buffer = Buffer.alloc(1000);
-        this.borshInstructionSchema.encode({ ...this, variant: 0 }, buffer);
+        this.borshInstructionSchema.encode({ ...this, variant: variant }, buffer);
         return buffer.slice(0, this.borshInstructionSchema.getSpan(buffer));
     }
 

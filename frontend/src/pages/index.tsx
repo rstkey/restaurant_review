@@ -1,7 +1,7 @@
 import { AppBar } from "@/components/AppBar";
 import ReviewCard from "@/components/ReviewCard";
 import { useEffect, useState } from "react";
-import { Review } from "@/models/Review";
+import { Review, ReviewVariant } from "@/models/Review";
 import * as web3 from "@solana/web3.js";
 import { fetchReviews } from "@/util/fetchReviews";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -21,6 +21,7 @@ export default function Home() {
   const [rating, setRating] = useState(0);
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
+  const [variant, setVariant] = useState(ReviewVariant.add);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -41,7 +42,7 @@ export default function Home() {
       return;
     }
 
-    const buffer = review.serialize();
+    const buffer = review.serialize(variant);
     const transaction = new web3.Transaction();
 
     const [pda] = await web3.PublicKey.findProgramAddressSync(
@@ -49,26 +50,11 @@ export default function Home() {
       new web3.PublicKey(REVIEW_PROGRAM_ID)
     );
 
-    const instruction = new web3.TransactionInstruction({
-      keys: [
-        {
-          pubkey: publicKey,
-          isSigner: true,
-          isWritable: false,
-        },
-        {
-          pubkey: pda,
-          isSigner: false,
-          isWritable: true,
-        },
-        {
-          pubkey: web3.SystemProgram.programId,
-          isSigner: false,
-          isWritable: false,
-        },
-      ],
-      data: buffer,
-      programId: new web3.PublicKey(REVIEW_PROGRAM_ID),
+    const instruction = createInstruction({
+      publicKey,
+      pda,
+      buffer,
+      variant,
     });
 
     transaction.add(instruction);
@@ -78,10 +64,56 @@ export default function Home() {
       setTxid(
         `Transaction submitted: https://explorer.solana.com/tx/${txid}?cluster=devnet`
       );
+      clearForm();
     } catch (e) {
       console.log(JSON.stringify(e));
       alert(JSON.stringify(e));
     }
+  };
+
+  const createInstruction = ({
+    publicKey,
+    pda,
+    buffer,
+    variant,
+  }: {
+    publicKey: web3.PublicKey;
+    pda: web3.PublicKey;
+    buffer: Buffer;
+    variant: ReviewVariant;
+  }) => {
+    const keys = [
+      {
+        pubkey: publicKey,
+        isSigner: true,
+        isWritable: false,
+      },
+      {
+        pubkey: pda,
+        isSigner: false,
+        isWritable: true,
+      },
+    ];
+    if (variant === ReviewVariant.add) {
+      keys.push({
+        pubkey: web3.SystemProgram.programId,
+        isSigner: false,
+        isWritable: false,
+      });
+    }
+    return new web3.TransactionInstruction({
+      keys: keys,
+      data: buffer,
+      programId: new web3.PublicKey(REVIEW_PROGRAM_ID),
+    });
+  };
+
+  const clearForm = () => {
+    setTitle("");
+    setRating(0);
+    setDescription("");
+    setLocation("");
+    setVariant(ReviewVariant.add);
   };
 
   return (
@@ -98,6 +130,7 @@ export default function Home() {
           description={description}
           location={location}
           rating={rating}
+          variant={variant}
           setTitle={setTitle}
           setDescription={setDescription}
           setLocation={setLocation}
@@ -110,8 +143,20 @@ export default function Home() {
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left">
         {reviews &&
-          reviews.map((review) => {
-            return <ReviewCard key={review.title} review={review} />;
+          reviews.map((review, index) => {
+            return (
+              <ReviewCard
+                key={index}
+                review={review}
+                onEditClick={() => {
+                  setTitle(review.title);
+                  setRating(review.rating);
+                  setDescription(review.description);
+                  setLocation(review.location);
+                  setVariant(ReviewVariant.update);
+                }}
+              />
+            );
           })}
       </div>
     </main>
