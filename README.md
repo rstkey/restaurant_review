@@ -44,7 +44,7 @@ You can go [here](https://restaurant-review-pi.vercel.app/) or follow these step
 1. Clone the repository:
 
 ```bash
-  git clone https://github.com/alap-de/restaurant_review.git
+  git clone https://github.com/rust-solman/restaurant_review.git
 ```
 
 2. Navigate to the project directory:
@@ -106,4 +106,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-Thank you for your interest in the Web3 Restaurant Review DApp project! For questions or suggestions, reach out to us or open an issue on [GitHub](https://github.com/alap-de/restaurant_review.git). Let your opinions be known on the blockchain! 🚀
+Thank you for your interest in the Web3 Restaurant Review DApp project! For questions or suggestions, reach out to us or open an issue on [GitHub](https://github.com/rust-solman/restaurant_review.git). Let your opinions be known on the blockchain! 🚀
